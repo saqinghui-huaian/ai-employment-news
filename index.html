@@ -1,0 +1,1308 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AI浪潮下的职业变局</title>
+<script src="assets/echarts.min.js"></script>
+<script src="assets/gsap.min.js"></script>
+<script src="assets/ScrollTrigger.min.js"></script>
+<style>
+*,*::before,*::after{margin:0;padding:0;box-sizing:border-box}
+:root{
+  --white:#FFFFFF;--bg:#FAFBFC;--navy:#1a1a2e;--coral:#E85D4A;
+  --blue:#3B82F6;--teal:#14B8A6;--amber:#F59E0B;--purple:#8B5CF6;
+  --gray-100:#f3f4f6;--gray-200:#e5e7eb;--gray-400:#9ca3af;--gray-600:#4b5563;
+  --serif:'Songti SC','STSong','SimSun','Noto Serif SC',serif;
+  --sans:-apple-system,'PingFang SC','Microsoft YaHei','Noto Sans SC',sans-serif;
+}
+html{scroll-behavior:smooth;font-size:16px}
+body{
+  font-family:var(--sans);color:var(--navy);background:var(--white);
+  line-height:1.8;overflow-x:hidden;
+}
+h1,h2,h3,h4{font-family:var(--serif);line-height:1.4}
+.container{max-width:1200px;margin:0 auto;padding:0 clamp(1rem,4vw,3rem)}
+
+/* ===== HERO ===== */
+.hero{
+  position:relative;min-height:100vh;display:flex;flex-direction:column;
+  justify-content:center;align-items:center;text-align:center;
+  background:linear-gradient(135deg,#0f0c29,#302b63,#24243e);
+  color:#fff;overflow:hidden;
+}
+.hero::after{
+  content:'';position:absolute;top:0;left:0;right:0;bottom:0;
+  background:url('assets/bg1.png') center/cover no-repeat;
+  opacity:.2;z-index:0;pointer-events:none;
+}
+.hero canvas{position:absolute;top:0;left:0;width:100%;height:100%;z-index:1}
+.hero-content{position:relative;z-index:2;padding:2rem}
+.hero-label{
+  font-size:clamp(.8rem,1.5vw,1rem);letter-spacing:.3em;text-transform:uppercase;
+  color:var(--coral);margin-bottom:1rem;font-weight:500;
+}
+.hero h1{
+  font-size:clamp(2rem,5.5vw,4.5rem);font-weight:900;margin-bottom:1.5rem;
+  background:linear-gradient(135deg,#fff 0%,#a8edea 50%,#fed6e3 100%);
+  -webkit-background-clip:text;-webkit-text-fill-color:transparent;
+  background-clip:text;
+}
+.hero-sub{
+  font-size:clamp(1rem,2vw,1.3rem);max-width:700px;margin:0 auto 3rem;
+  color:rgba(255,255,255,.85);line-height:1.9;font-weight:300;
+}
+.hero-stats{
+  display:grid;grid-template-columns:repeat(3,1fr);gap:1.5rem;
+  max-width:800px;width:100%;
+}
+.stat-card{
+  background:rgba(255,255,255,.08);backdrop-filter:blur(20px);
+  border:1px solid rgba(255,255,255,.15);border-radius:16px;padding:1.5rem;
+  transition:transform .3s;text-align:center;
+}
+.stat-card:hover{transform:translateY(-4px)}
+.stat-num{
+  font-family:var(--serif);font-size:clamp(2rem,4vw,3.2rem);font-weight:900;
+  background:linear-gradient(135deg,var(--coral),var(--amber));
+  -webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;
+  min-height:1.3em;line-height:1.3;
+  font-variant-numeric:tabular-nums;
+  /* reserve space for widest possible number */
+  display:flex;align-items:center;justify-content:center;
+}
+.stat-label{font-size:.85rem;color:rgba(255,255,255,.7);margin-top:.3rem}
+.scroll-hint{
+  position:absolute;bottom:2rem;left:50%;transform:translateX(-50%);z-index:2;
+  display:flex;flex-direction:column;align-items:center;gap:.5rem;
+  color:rgba(255,255,255,.5);font-size:.8rem;animation:bounce 2s infinite;
+}
+@keyframes bounce{0%,100%{transform:translateX(-50%) translateY(0)}50%{transform:translateX(-50%) translateY(-8px)}}
+.scroll-hint svg{width:24px;height:24px;stroke:rgba(255,255,255,.5);fill:none;stroke-width:2}
+
+/* Section background images */
+.section{
+  position:relative;padding:clamp(4rem,8vw,8rem) 0;
+  background:var(--white);
+}
+.section::before{
+  content:'';position:absolute;top:0;left:0;right:0;bottom:0;
+  background-size:cover;background-position:center;background-attachment:fixed;
+  opacity:.15;z-index:0;pointer-events:none;
+}
+.section-s1::before{background-image:url('assets/bg1.png')}
+.section-s2::before{background-image:url('assets/bg1.png')}
+.section-s3::before{background-image:url('assets/bg2.png')}
+.section-s4::before{background-image:url('assets/bg2.png')}
+.section-s5::before{background-image:url('assets/bg3.png')}
+.section-s6::before{background-image:url('assets/bg3.png')}
+.section-s7::before{background-image:url('assets/bg4.png')}
+.section-inner{position:relative;z-index:1}
+.section-divider{
+  width:100%;height:80px;position:relative;
+  background:transparent;overflow:hidden;
+}
+.section-divider::before{
+  content:'';position:absolute;top:0;left:10%;right:10%;height:100%;
+  background:linear-gradient(90deg,transparent 0%,rgba(232,93,74,.12) 20%,rgba(59,130,246,.12) 40%,rgba(20,184,166,.12) 60%,rgba(245,158,11,.12) 80%,transparent 100%);
+  filter:blur(30px);pointer-events:none;
+}
+.section-divider::after{
+  content:'';position:absolute;top:50%;left:15%;right:15%;height:1px;
+  background:linear-gradient(90deg,transparent,var(--coral),var(--blue),var(--teal),var(--amber),transparent);
+  opacity:.3;
+}
+
+/* GSAP initial states — prevent flash on load */
+.section-header>*{opacity:0;transform:translateY(40px)}
+.narrative{opacity:0;transform:translateY(30px)}
+.quote-block{opacity:0;transform:translateY(40px)}
+.step-card-inner{opacity:0;transform:translateX(-30px)}
+.job-card{opacity:0;transform:translateY(30px)}
+#closing h2,#closing p,#closing .final-line{opacity:0;transform:translateY(40px)}
+
+/* Section headings */
+.section-header{text-align:center;margin-bottom:3rem}
+.section-header .tag{
+  display:inline-block;font-size:.75rem;font-weight:700;letter-spacing:.2em;
+  text-transform:uppercase;color:var(--coral);margin-bottom:.8rem;
+  padding:.3rem 1rem;border:1px solid var(--coral);border-radius:50px;
+}
+.section-header h2{
+  font-size:clamp(1.6rem,3.5vw,2.8rem);color:var(--navy);margin-bottom:.8rem;
+}
+.section-header p{
+  font-size:clamp(.95rem,1.5vw,1.1rem);color:var(--gray-600);max-width:700px;margin:0 auto;
+}
+
+/* ===== SCROLLYTELLING ===== */
+.scrolly-container{
+  display:grid;grid-template-columns:1fr 1fr;gap:2rem;
+  align-items:start;
+}
+.scrolly-steps{position:relative;padding:0 1rem}
+.scrolly-sticky{
+  position:sticky;top:10vh;height:80vh;display:flex;align-items:center;
+  justify-content:center;
+}
+.step-card{
+  min-height:80vh;display:flex;align-items:center;padding:2rem;
+}
+.step-card-inner{
+  background:rgba(255,255,255,.7);backdrop-filter:blur(20px);
+  border:1px solid rgba(255,255,255,.8);border-radius:20px;
+  padding:clamp(1.5rem,3vw,2.5rem);
+  box-shadow:0 8px 32px rgba(0,0,0,.08);
+  transition:all .4s;
+}
+.step-card-inner.active{border-color:var(--coral);box-shadow:0 12px 40px rgba(232,93,74,.15)}
+.step-card-inner h3{
+  font-size:clamp(1.1rem,2vw,1.5rem);margin-bottom:1rem;
+  display:flex;align-items:center;gap:.5rem;
+}
+.step-card-inner h3 .num{
+  display:inline-flex;align-items:center;justify-content:center;
+  width:32px;height:32px;border-radius:50%;background:var(--coral);color:#fff;
+  font-size:.8rem;font-family:var(--sans);font-weight:700;
+}
+.step-card-inner p{font-size:clamp(.9rem,1.3vw,1.05rem);color:var(--gray-600)}
+.chart-container{width:100%;height:80vh}
+
+/* ===== QUOTE ===== */
+.quote-section{
+  padding:clamp(3rem,6vw,6rem) 0;
+  background:linear-gradient(135deg,#f8f9ff,#f0f4ff);
+  position:relative;overflow:hidden;
+}
+.quote-section::before{
+  content:'';position:absolute;top:0;left:0;right:0;bottom:0;
+  background:url('assets/bg2.png') center/cover no-repeat fixed;
+  opacity:.12;z-index:0;
+}
+.quote-block{
+  max-width:800px;margin:0 auto;text-align:center;padding:0 2rem;
+  position:relative;z-index:1;
+}
+.quote-mark{font-size:4rem;color:var(--coral);line-height:1;opacity:.3}
+.quote-text{
+  font-family:var(--serif);font-size:clamp(1.1rem,2.2vw,1.5rem);
+  color:var(--navy);margin:1rem 0 1.5rem;font-style:italic;
+}
+.quote-author{font-size:.9rem;color:var(--gray-400);font-weight:500}
+
+/* ===== FULL-WIDTH CHART ===== */
+.full-chart{
+  width:100%;height:clamp(400px,60vh,600px);
+  border-radius:16px;overflow:hidden;
+  background:var(--white);
+  box-shadow:0 4px 20px rgba(0,0,0,.06);
+}
+
+/* ===== NARRATIVE TEXT ===== */
+.narrative{
+  max-width:750px;margin:0 auto 3rem;font-size:clamp(1rem,1.8vw,1.15rem);
+  color:var(--gray-600);text-align:center;
+}
+.narrative strong{color:var(--navy)}
+.highlight{color:var(--coral);font-weight:700}
+
+/* ===== CLOSING ===== */
+.closing{
+  background:linear-gradient(135deg,#1a1a2e,#16213e,#0f3460);
+  color:#fff;padding:clamp(4rem,8vw,8rem) 0;text-align:center;
+  position:relative;overflow:hidden;
+}
+.closing::before{
+  content:'';position:absolute;top:0;left:0;right:0;bottom:0;
+  background:url('assets/bg4.png') center/cover no-repeat fixed;
+  opacity:.18;z-index:0;
+}
+.closing .container{position:relative;z-index:1}
+.closing h2{
+  font-size:clamp(1.8rem,4vw,3rem);margin-bottom:1.5rem;
+  background:linear-gradient(135deg,#fff,#a8edea);
+  -webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;
+}
+.closing p{
+  font-size:clamp(1rem,1.8vw,1.2rem);max-width:700px;margin:0 auto;
+  color:rgba(255,255,255,.8);line-height:2;
+}
+.closing .final-line{
+  font-family:var(--serif);font-size:clamp(1.2rem,2.5vw,1.8rem);
+  margin-top:2rem;font-weight:700;
+  background:linear-gradient(135deg,var(--coral),var(--amber));
+  -webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;
+}
+
+/* ===== FOOTER ===== */
+.footer{
+  background:#0f0c29;color:rgba(255,255,255,.5);text-align:center;
+  padding:2rem;font-size:.8rem;
+}
+
+/* ===== JOB CARDS GRID ===== */
+.job-cards-grid{
+  display:grid;
+  grid-template-columns:repeat(auto-fill,minmax(280px,1fr));
+  gap:1.5rem;
+  margin:2rem 0;
+}
+.job-card{
+  position:relative;
+  background:#fff;
+  border-radius:20px;
+  padding:1.8rem 1.5rem 1.5rem;
+  border:1px solid #f0f0f0;
+  box-shadow:0 2px 16px rgba(0,0,0,.04);
+  overflow:hidden;
+  transition:transform .4s cubic-bezier(.23,1,.32,1),box-shadow .4s;
+  opacity:0;
+  transform:translateY(30px);
+}
+.job-card:hover{
+  transform:translateY(-6px);
+  box-shadow:0 16px 48px rgba(0,0,0,.1);
+}
+.job-card-glow{
+  position:absolute;top:-40%;right:-40%;
+  width:80%;height:80%;
+  border-radius:50%;
+  filter:blur(60px);
+  opacity:0;
+  transition:opacity .5s;
+  pointer-events:none;
+}
+.job-card:hover .job-card-glow{opacity:.18}
+.job-card[data-cat="data"] .job-card-glow{background:var(--blue)}
+.job-card[data-cat="interact"] .job-card-glow{background:var(--coral)}
+.job-card[data-cat="govern"] .job-card-glow{background:var(--teal)}
+.job-card[data-cat="create"] .job-card-glow{background:var(--amber)}
+.job-card[data-cat="data"]{border-top:3px solid var(--blue)}
+.job-card[data-cat="interact"]{border-top:3px solid var(--coral)}
+.job-card[data-cat="govern"]{border-top:3px solid var(--teal)}
+.job-card[data-cat="create"]{border-top:3px solid var(--amber)}
+.job-card-head{
+  display:flex;align-items:center;gap:.6rem;
+  margin-bottom:.8rem;
+}
+.job-icon{font-size:1.6rem;line-height:1}
+.job-cat-tag{
+  font-size:.7rem;font-weight:700;letter-spacing:.1em;
+  padding:.2rem .6rem;border-radius:10px;
+  background:rgba(0,0,0,.04);color:var(--gray-600);
+}
+.job-card[data-cat="data"] .job-cat-tag{background:rgba(59,130,246,.08);color:var(--blue)}
+.job-card[data-cat="interact"] .job-cat-tag{background:rgba(232,93,74,.08);color:var(--coral)}
+.job-card[data-cat="govern"] .job-cat-tag{background:rgba(20,184,166,.08);color:var(--teal)}
+.job-card[data-cat="create"] .job-cat-tag{background:rgba(245,158,11,.08);color:var(--amber)}
+.job-title{
+  font-size:1.15rem;font-weight:700;
+  font-family:var(--serif);
+  margin-bottom:.5rem;
+  color:var(--navy);
+}
+.job-desc{
+  font-size:.88rem;
+  color:var(--gray-600);
+  line-height:1.7;
+  margin-bottom:1.2rem;
+  min-height:3.4rem;
+}
+.job-stats{
+  display:flex;gap:0;
+  border-top:1px solid #f0f0f0;
+  padding-top:1rem;
+}
+.job-stat{
+  flex:1;text-align:center;
+  border-right:1px solid #f0f0f0;
+}
+.job-stat:last-child{border-right:none}
+.job-stat-val{
+  display:block;
+  font-size:.95rem;font-weight:700;
+  color:var(--navy);
+  font-family:var(--sans);
+}
+.job-stat-val.growth{
+  color:#10b981;
+}
+.job-stat-label{
+  display:block;
+  font-size:.7rem;
+  color:var(--gray-400);
+  margin-top:.15rem;
+  letter-spacing:.05em;
+}
+.job-cat-legend{
+  display:flex;justify-content:center;gap:2rem;
+  margin-top:2rem;flex-wrap:wrap;
+}
+.legend-item{
+  display:flex;align-items:center;gap:.4rem;
+  font-size:.85rem;color:var(--gray-600);
+}
+.legend-item i{
+  display:inline-block;width:12px;height:12px;
+  border-radius:4px;
+}
+.legend-item[data-cat="data"] i{background:var(--blue)}
+.legend-item[data-cat="interact"] i{background:var(--coral)}
+.legend-item[data-cat="govern"] i{background:var(--teal)}
+.legend-item[data-cat="create"] i{background:var(--amber)}
+
+@media(max-width:640px){
+  .job-cards-grid{grid-template-columns:1fr}
+}
+
+/* ===== RESPONSIVE ===== */
+@media(max-width:768px){
+  .scrolly-container{grid-template-columns:1fr}
+  .scrolly-sticky{position:relative;height:50vh;top:auto}
+  .chart-container{height:50vh}
+  .hero-stats{grid-template-columns:1fr;max-width:300px}
+  .step-card{min-height:auto;padding:1rem 0}
+  #sec-gauge .container>div[style*="grid"]{grid-template-columns:1fr!important}
+  .section-divider{height:50px}
+}
+</style>
+</head>
+<body>
+
+<!-- ========== HERO ========== -->
+<section class="hero" id="hero">
+  <canvas id="particleCanvas"></canvas>
+  <div class="hero-content">
+    <div class="hero-label">AI浪潮下的职业变局</div>
+    <h1>AI浪潮下的<br>职业变局</h1>
+    <p class="hero-sub">
+      2023年，ChatGPT横空出世，人工智能以惊人的速度渗透到各行各业。<br>
+      高盛预测全球3亿岗位将受冲击，世界经济论坛警告9700万岗位面临重塑，<br>
+      普华永道指出26%的工作岗位将被AI深刻改变。一场前所未有的职业变革正在上演。
+    </p>
+    <div class="hero-stats">
+      <div class="stat-card">
+        <div class="stat-num" data-target="300000000" data-suffix="" data-format="cn">0</div>
+        <div class="stat-label">高盛：全球受影响岗位</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-num" data-target="9700" data-suffix="万" data-format="num">0</div>
+        <div class="stat-label">WEF：需重塑的岗位</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-num" data-target="26" data-suffix="%" data-format="num">0</div>
+        <div class="stat-label">普华永道：受影响比例</div>
+      </div>
+    </div>
+  </div>
+  <div class="scroll-hint">
+    <span>向下滑动探索</span>
+    <svg><path d="M12 5v14M5 12l7 7 7-7"/></svg>
+  </div>
+</section>
+
+<div class="section-divider"></div>
+
+<!-- ========== SECTION 1: AUTOMATION RISK BAR ========== -->
+<section class="section section-s1" id="sec-bar">
+  <div class="container section-inner">
+    <div class="section-header">
+      <div class="tag">谁在危险区？</div>
+      <h2>15个职业的自动化风险排名</h2>
+      <p>基于McKinsey、OECD和中国信通院的综合研究数据，哪些职业最可能被AI取代？</p>
+    </div>
+    <div class="scrolly-container">
+      <div class="scrolly-steps" id="bar-steps">
+        <div class="step-card"><div class="step-card-inner active" data-step="0">
+          <h3><span class="num">1</span> 高风险：重复性脑力劳动</h3>
+          <p>数据录入员（88%）、速记员（85%）、银行柜员（78%）——这些以重复性操作为核心的职业面临最大威胁。AI已能在毫秒级完成数据录入，语音识别准确率超过98%。</p>
+        </div></div>
+        <div class="step-card"><div class="step-card-inner" data-step="1">
+          <h3><span class="num">2</span> 中风险：部分可替代的专业工作</h3>
+          <p>会计（68%）、翻译（62%）、法律助理（55%）——AI能处理标准化任务，但复杂判断仍需人类。GPT-4已通过注册会计师考试，翻译质量逼近人类水平。</p>
+        </div></div>
+        <div class="step-card"><div class="step-card-inner" data-step="2">
+          <h3><span class="num">3</span> 低风险：创意与情感密集型</h3>
+          <p>教师（20%）、医生（25%）、心理咨询师（15%）、创意总监（10%）——需要深度人际互动、创造力和复杂判断的职业相对安全，但AI正成为强大的辅助工具。</p>
+        </div></div>
+      </div>
+      <div class="scrolly-sticky">
+        <div class="chart-container" id="chart-bar"></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<div class="section-divider"></div>
+
+<!-- ========== QUOTE 1 ========== -->
+<section class="quote-section">
+  <div class="container">
+    <div class="quote-block">
+      <div class="quote-mark">"</div>
+      <p class="quote-text">我在银行做了12年柜员，去年网点引入了智能柜台，80%的业务都能自助办理。我不得不转型做理财顾问，但说实话，重新学习的焦虑远比失业本身更让人痛苦。</p>
+      <div class="quote-author">—— 李女士，38岁，前银行柜员</div>
+    </div>
+  </div>
+</section>
+
+<!-- ========== SECTION 2: NEW JOBS CARDS ========== -->
+<section class="section section-s2" id="sec-newjobs">
+  <div class="container section-inner">
+    <div class="section-header">
+      <div class="tag">新机遇涌现</div>
+      <h2>AI催生的10大新兴职业</h2>
+      <p>每一次技术革命都在消灭旧岗位的同时创造新职业，AI时代也不例外</p>
+    </div>
+    <div class="job-cards-grid">
+      <div class="job-card" data-cat="data">
+        <div class="job-card-glow"></div>
+        <div class="job-card-head">
+          <span class="job-icon">🧠</span>
+          <span class="job-cat-tag">数据与训练</span>
+        </div>
+        <h3 class="job-title">AI训练师</h3>
+        <p class="job-desc">负责训练和优化AI模型，调整参数与数据集，是AI系统的"教练"</p>
+        <div class="job-stats">
+          <div class="job-stat"><span class="job-stat-val">1.5-3万</span><span class="job-stat-label">月薪</span></div>
+          <div class="job-stat"><span class="job-stat-val growth">+350%</span><span class="job-stat-label">增速</span></div>
+          <div class="job-stat"><span class="job-stat-val">50万+</span><span class="job-stat-label">从业者</span></div>
+        </div>
+      </div>
+      <div class="job-card" data-cat="data">
+        <div class="job-card-glow"></div>
+        <div class="job-card-head">
+          <span class="job-icon">📊</span>
+          <span class="job-cat-tag">数据与训练</span>
+        </div>
+        <h3 class="job-title">数据标注工程师</h3>
+        <p class="job-desc">为AI提供"教材"——标注图像、文本、语音等训练数据，市场规模超100亿</p>
+        <div class="job-stats">
+          <div class="job-stat"><span class="job-stat-val">0.8-2万</span><span class="job-stat-label">月薪</span></div>
+          <div class="job-stat"><span class="job-stat-val growth">+300%</span><span class="job-stat-label">增速</span></div>
+          <div class="job-stat"><span class="job-stat-val">100亿+</span><span class="job-stat-label">市场规模</span></div>
+        </div>
+      </div>
+      <div class="job-card" data-cat="data">
+        <div class="job-card-glow"></div>
+        <div class="job-card-head">
+          <span class="job-icon">🔍</span>
+          <span class="job-cat-tag">数据与训练</span>
+        </div>
+        <h3 class="job-title">数据治理专家</h3>
+        <p class="job-desc">确保AI训练数据的质量、合规和安全，是数据资产的"守护者"</p>
+        <div class="job-stats">
+          <div class="job-stat"><span class="job-stat-val">2-4万</span><span class="job-stat-label">月薪</span></div>
+          <div class="job-stat"><span class="job-stat-val growth">+180%</span><span class="job-stat-label">增速</span></div>
+          <div class="job-stat"><span class="job-stat-val">急缺</span><span class="job-stat-label">市场状态</span></div>
+        </div>
+      </div>
+      <div class="job-card" data-cat="interact">
+        <div class="job-card-glow"></div>
+        <div class="job-card-head">
+          <span class="job-icon">💬</span>
+          <span class="job-cat-tag">提示与交互</span>
+        </div>
+        <h3 class="job-title">提示工程师</h3>
+        <p class="job-desc">设计与AI对话的"咒语"，让大模型输出精准结果，资深年薪可达50万+</p>
+        <div class="job-stats">
+          <div class="job-stat"><span class="job-stat-val">1.5-4万</span><span class="job-stat-label">月薪</span></div>
+          <div class="job-stat"><span class="job-stat-val growth">+420%</span><span class="job-stat-label">增速</span></div>
+          <div class="job-stat"><span class="job-stat-val">新兴</span><span class="job-stat-label">市场状态</span></div>
+        </div>
+      </div>
+      <div class="job-card" data-cat="interact">
+        <div class="job-card-glow"></div>
+        <div class="job-card-head">
+          <span class="job-icon">🎯</span>
+          <span class="job-cat-tag">提示与交互</span>
+        </div>
+        <h3 class="job-title">AI产品经理</h3>
+        <p class="job-desc">将AI技术转化为可用产品，连接技术团队与市场需求的"翻译官"</p>
+        <div class="job-stats">
+          <div class="job-stat"><span class="job-stat-val">2.5-5万</span><span class="job-stat-label">月薪</span></div>
+          <div class="job-stat"><span class="job-stat-val growth">+200%</span><span class="job-stat-label">增速</span></div>
+          <div class="job-stat"><span class="job-stat-val">高薪</span><span class="job-stat-label">市场状态</span></div>
+        </div>
+      </div>
+      <div class="job-card" data-cat="interact">
+        <div class="job-card-glow"></div>
+        <div class="job-card-head">
+          <span class="job-icon">🎨</span>
+          <span class="job-cat-tag">提示与交互</span>
+        </div>
+        <h3 class="job-title">人机交互设计师</h3>
+        <p class="job-desc">设计人与AI的交互界面和体验，让AI变得"好用"且"想用"</p>
+        <div class="job-stats">
+          <div class="job-stat"><span class="job-stat-val">2-4万</span><span class="job-stat-label">月薪</span></div>
+          <div class="job-stat"><span class="job-stat-val growth">+160%</span><span class="job-stat-label">增速</span></div>
+          <div class="job-stat"><span class="job-stat-val">稳定增长</span><span class="job-stat-label">市场状态</span></div>
+        </div>
+      </div>
+      <div class="job-card" data-cat="govern">
+        <div class="job-card-glow"></div>
+        <div class="job-card-head">
+          <span class="job-icon">⚖️</span>
+          <span class="job-cat-tag">伦理与治理</span>
+        </div>
+        <h3 class="job-title">AI伦理审核员</h3>
+        <p class="job-desc">审查AI系统的偏见、歧视和伦理风险，确保AI"向善"</p>
+        <div class="job-stats">
+          <div class="job-stat"><span class="job-stat-val">2-4万</span><span class="job-stat-label">月薪</span></div>
+          <div class="job-stat"><span class="job-stat-val growth">+250%</span><span class="job-stat-label">增速</span></div>
+          <div class="job-stat"><span class="job-stat-val">政策驱动</span><span class="job-stat-label">市场状态</span></div>
+        </div>
+      </div>
+      <div class="job-card" data-cat="govern">
+        <div class="job-card-glow"></div>
+        <div class="job-card-head">
+          <span class="job-icon">🔐</span>
+          <span class="job-cat-tag">伦理与治理</span>
+        </div>
+        <h3 class="job-title">算法审计师</h3>
+        <p class="job-desc">对AI算法进行独立审计，确保决策透明、可解释、符合法规</p>
+        <div class="job-stats">
+          <div class="job-stat"><span class="job-stat-val">2.5-6万</span><span class="job-stat-label">月薪</span></div>
+          <div class="job-stat"><span class="job-stat-val growth">+280%</span><span class="job-stat-label">增速</span></div>
+          <div class="job-stat"><span class="job-stat-val">法规要求</span><span class="job-stat-label">市场状态</span></div>
+        </div>
+      </div>
+      <div class="job-card" data-cat="govern">
+        <div class="job-card-glow"></div>
+        <div class="job-card-head">
+          <span class="job-icon">🛡️</span>
+          <span class="job-cat-tag">伦理与治理</span>
+        </div>
+        <h3 class="job-title">数字安全顾问</h3>
+        <p class="job-desc">防范AI系统被攻击或滥用，保护数据隐私和数字资产安全</p>
+        <div class="job-stats">
+          <div class="job-stat"><span class="job-stat-val">2.5-5万</span><span class="job-stat-label">月薪</span></div>
+          <div class="job-stat"><span class="job-stat-val growth">+220%</span><span class="job-stat-label">增速</span></div>
+          <div class="job-stat"><span class="job-stat-val">刚需</span><span class="job-stat-label">市场状态</span></div>
+        </div>
+      </div>
+      <div class="job-card" data-cat="create">
+        <div class="job-card-glow"></div>
+        <div class="job-card-head">
+          <span class="job-icon">✨</span>
+          <span class="job-cat-tag">创意与内容</span>
+        </div>
+        <h3 class="job-title">AIGC内容创作者</h3>
+        <p class="job-desc">利用AI工具进行内容创作——文字、图像、视频、音乐，人机协作的新型创作者</p>
+        <div class="job-stats">
+          <div class="job-stat"><span class="job-stat-val">1.5-4万</span><span class="job-stat-label">月薪</span></div>
+          <div class="job-stat"><span class="job-stat-val growth">+380%</span><span class="job-stat-label">增速</span></div>
+          <div class="job-stat"><span class="job-stat-val">爆发期</span><span class="job-stat-label">市场状态</span></div>
+        </div>
+      </div>
+    </div>
+    <div class="job-cat-legend">
+      <span class="legend-item" data-cat="data"><i></i>数据与训练类</span>
+      <span class="legend-item" data-cat="interact"><i></i>提示与交互类</span>
+      <span class="legend-item" data-cat="govern"><i></i>伦理与治理类</span>
+      <span class="legend-item" data-cat="create"><i></i>创意与内容类</span>
+    </div>
+  </div>
+</section>
+
+<div class="section-divider"></div>
+
+<!-- ========== SECTION 3: RADAR ========== -->
+<section class="section section-s3" id="sec-radar">
+  <div class="container section-inner">
+    <div class="section-header">
+      <div class="tag">行业全景</div>
+      <h2>八大行业：失业 vs 创业的天平</h2>
+      <p>不同行业受到AI冲击和受益的程度截然不同</p>
+    </div>
+    <div class="narrative">
+      人工智能对各行业的影响并非"一刀切"。<strong class="highlight">制造业</strong>和<strong class="highlight">金融业</strong>面临最大规模的岗位流失，
+      而<strong class="highlight">科技行业</strong>和<strong class="highlight">医疗健康</strong>则迎来大量新岗位。
+      关键在于：行业创造的新岗位数量能否超过被替代的旧岗位？
+    </div>
+    <div class="full-chart" id="chart-radar"></div>
+  </div>
+</section>
+
+<div class="section-divider"></div>
+
+<!-- ========== QUOTE 2 ========== -->
+<section class="quote-section">
+  <div class="container">
+    <div class="quote-block">
+      <div class="quote-mark">"</div>
+      <p class="quote-text">从工厂流水线被机器人取代后，我花三个月参加了政府补贴的AI数据标注培训。现在我的收入比以前高了30%，工作环境也好了很多。改变虽然痛苦，但不改变更痛苦。</p>
+      <div class="quote-author">—— 张先生，32岁，前流水线工人，现数据标注工程师</div>
+    </div>
+  </div>
+</section>
+
+<!-- ========== SECTION 4: SCATTER/BUBBLE ========== -->
+<section class="section section-s4" id="sec-scatter">
+  <div class="container section-inner">
+    <div class="section-header">
+      <div class="tag">风险与回报</div>
+      <h2>薪资 × 自动化风险：职业全景图</h2>
+      <p>气泡大小代表从业人数，横轴为自动化风险，纵轴为平均年薪</p>
+    </div>
+    <div class="narrative">
+      这张图揭示了一个残酷的规律：<strong>低薪岗位往往面临更高的自动化风险</strong>。
+      数据录入员（月薪约5000元，风险88%）与创意总监（月薪约4万元，风险10%）形成鲜明对比。
+      但也有例外——教师薪资不高，但情感交互的不可替代性使其风险仅为20%。
+    </div>
+    <div class="full-chart" id="chart-scatter"></div>
+  </div>
+</section>
+
+<div class="section-divider"></div>
+
+<!-- ========== SECTION 5: SANKEY ========== -->
+<section class="section section-s5" id="sec-sankey">
+  <div class="container section-inner">
+    <div class="section-header">
+      <div class="tag">流动与转向</div>
+      <h2>职业迁徙：从旧岗位流向何方？</h2>
+      <p>AI时代最大的职业迁移正在发生——数百万人从传统岗位流向新兴领域</p>
+    </div>
+    <div class="narrative">
+      这张桑基图展示了五个传统职业的从业者的去向。
+      <strong class="highlight">数据录入员</strong>中约30%转型为AI训练师，
+      <strong class="highlight">基础财务人员</strong>则更多转向数据标注和提示工程。
+      值得注意的是，仍有15-25%的人面临失业风险，凸显了职业培训体系的紧迫性。
+    </div>
+    <div class="full-chart" id="chart-sankey"></div>
+  </div>
+</section>
+
+<div class="section-divider"></div>
+
+<!-- ========== QUOTE 3 ========== -->
+<section class="quote-section">
+  <div class="container">
+    <div class="quote-block">
+      <div class="quote-mark">"</div>
+      <p class="quote-text">我是一名翻译，从业15年。现在AI翻译工具的准确率已经达到95%以上，我的业务量下降了60%。但我没有放弃——我转向了文学翻译和本地化咨询，AI翻译不了文化的温度。</p>
+      <div class="quote-author">—— 王先生，42岁，自由翻译从业者</div>
+    </div>
+  </div>
+</section>
+
+<!-- ========== SECTION 6: DUAL AXIS LINE ========== -->
+<section class="section section-s6" id="sec-line">
+  <div class="container section-inner">
+    <div class="section-header">
+      <div class="tag">供需失衡</div>
+      <h2>中国AI人才缺口：急速扩大的鸿沟</h2>
+      <p>AI岗位需求以年均40%的速度增长，而人才培养速度远远跟不上</p>
+    </div>
+    <div class="narrative">
+      2024年中国AI人才缺口已达<strong class="highlight">500万</strong>，预计到2030年将扩大至<strong class="highlight">800万</strong>。
+      与此同时，高校AI相关专业的毕业生数量虽然增长迅速，但供需比仍在持续恶化。
+      这意味着：掌握AI技能的人才将在未来十年享有巨大的薪资溢价。
+    </div>
+    <div class="full-chart" id="chart-line"></div>
+  </div>
+</section>
+
+<div class="section-divider"></div>
+
+<!-- ========== SECTION 7: GAUGE + PIE ========== -->
+<section class="section section-s7" id="sec-gauge">
+  <div class="container section-inner">
+    <div class="section-header">
+      <div class="tag">你准备好了吗？</div>
+      <h2>AI时代就绪度评估</h2>
+      <p>基于数字素养、职业培训、政策支持、企业转型和教育体系五大维度的综合评估</p>
+    </div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:2rem">
+      <div class="full-chart" id="chart-gauge" style="height:clamp(380px,50vh,550px)"></div>
+      <div class="full-chart" id="chart-pie" style="height:clamp(380px,50vh,550px)"></div>
+    </div>
+    <div class="narrative" style="margin-top:2rem">
+      综合评估显示，全球AI时代就绪度仅为<strong class="highlight">47分（满分100）</strong>。
+      其中数字素养得分最高（62分），而职业培训体系最为薄弱（31分），
+      暴露出"技术跑在了教育前面"的结构性矛盾。
+      在风险等级分布中，<strong class="highlight">28%的职业处于高风险区</strong>，
+      而仅有<strong class="highlight">18%处于低风险区</strong>。
+      数据来源：PwC《全球AI就绪指数》、WEF《2025未来就业报告》、中国信通院。
+    </div>
+  </div>
+</section>
+
+<div class="section-divider"></div>
+
+<!-- ========== CLOSING ========== -->
+<section class="closing" id="closing">
+  <div class="container">
+    <h2>历史反复证明：<br>技术革命从不消灭工作，只改变工作</h2>
+    <p>
+      从蒸汽机到电力，从互联网到AI——每一次技术革命都引发过恐慌，但最终都创造了更多、更好的就业机会。
+      关键不在于AI会取代多少人，而在于我们能否跟上变革的脚步。
+    </p>
+    <p class="final-line">与其恐惧被AI替代，不如主动成为驾驭AI的人。</p>
+  </div>
+</section>
+
+<footer class="footer">
+  <p>AI浪潮下的职业变局 · 数据来源：McKinsey / WEF / 高盛 / 普华永道 / 中国信通院</p>
+</footer>
+
+<script>
+// ========== PARTICLE CANVAS ==========
+(function(){
+  const canvas=document.getElementById('particleCanvas');
+  const ctx=canvas.getContext('2d');
+  let w,h,particles=[];
+  const isMobile=window.innerWidth<768;
+  const COUNT=isMobile?40:100;
+  function resize(){w=canvas.width=window.innerWidth;h=canvas.height=window.innerHeight}
+  window.addEventListener('resize',resize);resize();
+  class P{
+    constructor(){this.reset()}
+    reset(){
+      this.x=Math.random()*w;this.y=Math.random()*h;
+      this.vx=(Math.random()-.5)*.5;this.vy=(Math.random()-.5)*.5;
+      this.r=Math.random()*2+.5;this.a=Math.random()*.4+.1;
+    }
+    update(){
+      this.x+=this.vx;this.y+=this.vy;
+      if(this.x<0||this.x>w)this.vx*=-1;
+      if(this.y<0||this.y>h)this.vy*=-1;
+    }
+    draw(){
+      ctx.beginPath();ctx.arc(this.x,this.y,this.r,0,Math.PI*2);
+      ctx.fillStyle=`rgba(168,237,234,${this.a})`;ctx.fill();
+    }
+  }
+  for(let i=0;i<COUNT;i++)particles.push(new P());
+  function animate(){
+    ctx.clearRect(0,0,w,h);
+    for(let i=0;i<particles.length;i++){
+      particles[i].update();particles[i].draw();
+      for(let j=i+1;j<particles.length;j++){
+        const dx=particles[i].x-particles[j].x;
+        const dy=particles[i].y-particles[j].y;
+        const d=Math.sqrt(dx*dx+dy*dy);
+        if(d<120){
+          ctx.beginPath();ctx.moveTo(particles[i].x,particles[i].y);
+          ctx.lineTo(particles[j].x,particles[j].y);
+          ctx.strokeStyle=`rgba(168,237,234,${.15*(1-d/120)})`;
+          ctx.lineWidth=.5;ctx.stroke();
+        }
+      }
+    }
+    requestAnimationFrame(animate);
+  }
+  animate();
+})();
+
+// ========== COUNTER ANIMATION ==========
+function animateCounter(el){
+  const target=parseInt(el.dataset.target);
+  const suffix=el.dataset.suffix||'';
+  const format=el.dataset.format;
+  const duration=2000;
+  const start=performance.now();
+  function tick(now){
+    const p=Math.min((now-start)/duration,1);
+    const ease=1-Math.pow(1-p,3);
+    const val=Math.round(target*ease);
+    if(format==='cn'){
+      el.textContent=(val/10000).toFixed(0)+'亿'+suffix;
+    }else{
+      el.textContent=val.toLocaleString()+suffix;
+    }
+    if(p<1)requestAnimationFrame(tick);
+  }
+  requestAnimationFrame(tick);
+}
+// Trigger counters when hero is in view
+const heroObs=new IntersectionObserver((entries)=>{
+  entries.forEach(e=>{
+    if(e.isIntersecting){
+      document.querySelectorAll('.stat-num').forEach(animateCounter);
+      heroObs.disconnect();
+    }
+  });
+},{threshold:.3});
+heroObs.observe(document.getElementById('hero'));
+
+// ========== GSAP ANIMATIONS ==========
+gsap.registerPlugin(ScrollTrigger);
+
+// Animate section headers
+document.querySelectorAll('.section-header').forEach(el=>{
+  gsap.fromTo(el.children,{y:40,opacity:0},{scrollTrigger:{trigger:el,start:'top 80%',immediateRender:false},
+    y:0,opacity:1,duration:.8,stagger:.15,ease:'power2.out'
+  });
+});
+
+// Animate narrative text
+document.querySelectorAll('.narrative').forEach(el=>{
+  gsap.fromTo(el,{y:30,opacity:0},{scrollTrigger:{trigger:el,start:'top 80%',immediateRender:false},
+    y:0,opacity:1,duration:.8,ease:'power2.out'
+  });
+});
+
+// Animate quote sections
+document.querySelectorAll('.quote-block').forEach(el=>{
+  gsap.fromTo(el,{y:40,opacity:0},{scrollTrigger:{trigger:el,start:'top 80%',immediateRender:false},
+    y:0,opacity:1,duration:1,ease:'power2.out'
+  });
+});
+
+// Animate step cards
+document.querySelectorAll('.step-card-inner').forEach(el=>{
+  gsap.fromTo(el,{x:-30,opacity:0},{scrollTrigger:{trigger:el,start:'top 85%',immediateRender:false},
+    x:0,opacity:1,duration:.6,ease:'power2.out'
+  });
+});
+
+// ========== CHART INITIALIZATION (LAZY) ==========
+const chartInstances={};
+function lazyInitChart(id,initFn){
+  const el=document.getElementById(id);
+  if(!el)return;
+  const obs=new IntersectionObserver((entries)=>{
+    entries.forEach(e=>{
+      if(e.isIntersecting&&!chartInstances[id]){
+        chartInstances[id]=initFn();
+      }
+    });
+  },{threshold:.1});
+  obs.observe(el);
+}
+
+// ========== CHART 2: HORIZONTAL BAR ==========
+lazyInitChart('chart-bar',function(){
+  const chart=echarts.init(document.getElementById('chart-bar'));
+  const allData=[
+    {name:'数据录入员',value:88},{name:'速记员',value:85},
+    {name:'银行柜员',value:78},{name:'收银员',value:75},
+    {name:'客服代表',value:72},{name:'会计',value:68},
+    {name:'翻译',value:62},{name:'法律助理',value:55},
+    {name:'基础文案',value:52},{name:'初级程序员',value:45},
+    {name:'数据分析师',value:35},{name:'医生',value:25},
+    {name:'教师',value:20},{name:'心理咨询师',value:15},
+    {name:'创意总监',value:10}
+  ];
+  const subsets=[
+    allData.slice(0,5),
+    allData.slice(0,10),
+    allData
+  ];
+  function makeOption(data){
+    return{
+      tooltip:{trigger:'axis',axisPointer:{type:'shadow'},
+        backgroundColor:'rgba(255,255,255,.95)',borderColor:'#e5e7eb',
+        textStyle:{color:'#1a1a2e',fontFamily:'Microsoft YaHei,PingFang SC,sans-serif'},
+        formatter:function(p){
+          const d=p[0];let color;
+          if(d.value>=70)color='#E85D4A';
+          else if(d.value>=50)color='#F59E0B';
+          else if(d.value>=30)color='#3B82F6';
+          else color='#14B8A6';
+          return`<div style="font-weight:700;color:${color}">${d.name}</div>
+                 <div style="margin-top:4px">自动化风险：<b>${d.value}%</b></div>`;
+        }
+      },
+      grid:{left:'22%',right:'8%',top:'5%',bottom:'5%'},
+      xAxis:{type:'value',max:100,splitLine:{lineStyle:{color:'#f0f0f0'}},
+        axisLabel:{formatter:'{value}%',fontFamily:'Microsoft YaHei,PingFang SC,sans-serif'}},
+      yAxis:{type:'category',data:data.map(d=>d.name).reverse(),
+        axisLabel:{fontFamily:'Microsoft YaHei,PingFang SC,sans-serif',fontSize:13},
+        axisLine:{show:false},axisTick:{show:false}},
+      series:[{
+        type:'bar',data:data.map(d=>d.value).reverse(),barWidth:24,
+        itemStyle:{
+          borderRadius:[0,4,4,0],
+          color:function(p){
+            const v=p.value;
+            if(v>=70)return new echarts.graphic.LinearGradient(0,0,1,0,[{offset:0,color:'#E85D4A'},{offset:1,color:'#FF8A80'}]);
+            if(v>=50)return new echarts.graphic.LinearGradient(0,0,1,0,[{offset:0,color:'#F59E0B'},{offset:1,color:'#FFD54F'}]);
+            if(v>=30)return new echarts.graphic.LinearGradient(0,0,1,0,[{offset:0,color:'#3B82F6'},{offset:1,color:'#90CAF9'}]);
+            return new echarts.graphic.LinearGradient(0,0,1,0,[{offset:0,color:'#14B8A6'},{offset:1,color:'#80CBC4'}]);
+          }
+        },
+        label:{show:true,position:'right',formatter:'{c}%',fontFamily:'Microsoft YaHei,PingFang SC,sans-serif',fontWeight:'bold',fontSize:12},
+        animationDuration:1200,animationEasing:'cubicOut'
+      }]
+    };
+  }
+  chart.setOption(makeOption(subsets[0]));
+
+  // Scrollytelling steps
+  const stepEls=document.querySelectorAll('#bar-steps .step-card-inner');
+  const stepObserver=new IntersectionObserver((entries)=>{
+    entries.forEach(entry=>{
+      if(entry.isIntersecting){
+        const step=parseInt(entry.target.dataset.step);
+        stepEls.forEach(el=>el.classList.remove('active'));
+        entry.target.classList.add('active');
+        chart.setOption(makeOption(subsets[step]));
+      }
+    });
+  },{rootMargin:'-40% 0px -40% 0px'});
+  stepEls.forEach(el=>stepObserver.observe(el));
+  window.addEventListener('resize',()=>chart.resize());
+  return chart;
+});
+
+// ========== JOB CARDS: GSAP Animation ==========
+(function(){
+  const cards=document.querySelectorAll('.job-card');
+  if(!cards.length)return;
+  gsap.registerPlugin(ScrollTrigger);
+  cards.forEach((card,i)=>{
+    gsap.to(card,{
+      opacity:1,y:0,
+      duration:.7,
+      delay:i*.08,
+      ease:'power3.out',
+      scrollTrigger:{
+        trigger:card,
+        start:'top 88%',
+        toggleActions:'play none none none'
+      }
+    });
+  });
+})();
+
+// ========== CHART 4: RADAR ==========
+lazyInitChart('chart-radar',function(){
+  const chart=echarts.init(document.getElementById('chart-radar'));
+  const option={
+    tooltip:{
+      backgroundColor:'rgba(255,255,255,.95)',borderColor:'#e5e7eb',
+      textStyle:{color:'#1a1a2e',fontFamily:'Microsoft YaHei,PingFang SC,sans-serif'}
+    },
+    legend:{
+      data:['岗位流失','岗位创造'],bottom:10,
+      textStyle:{fontFamily:'Microsoft YaHei,PingFang SC,sans-serif',fontSize:13}
+    },
+    radar:{
+      indicator:[
+        {name:'制造业',max:100},{name:'金融业',max:100},
+        {name:'零售业',max:100},{name:'教育',max:100},
+        {name:'医疗',max:100},{name:'科技',max:100},
+        {name:'文创',max:100},{name:'农业',max:100}
+      ],
+      shape:'polygon',splitNumber:5,
+      axisName:{fontFamily:'Microsoft YaHei,PingFang SC,sans-serif',fontSize:12,color:'#555'},
+      splitLine:{lineStyle:{color:'#e5e7eb'}},
+      splitArea:{areaStyle:{color:['rgba(248,249,255,.5)','rgba(240,244,255,.5)']}},
+      axisLine:{lineStyle:{color:'#e5e7eb'}}
+    },
+    series:[{
+      type:'radar',
+      data:[
+        {value:[85,72,65,20,15,10,30,45],name:'岗位流失',
+         areaStyle:{color:'rgba(232,93,74,.15)'},lineStyle:{color:'#E85D4A',width:2},
+         itemStyle:{color:'#E85D4A'}},
+        {value:[40,35,30,55,70,90,45,20],name:'岗位创造',
+         areaStyle:{color:'rgba(20,184,166,.15)'},lineStyle:{color:'#14B8A6',width:2},
+         itemStyle:{color:'#14B8A6'}}
+      ],
+      animationDuration:1500
+    }]
+  };
+  chart.setOption(option);
+  window.addEventListener('resize',()=>chart.resize());
+  return chart;
+});
+
+// ========== CHART 5: SCATTER/BUBBLE ==========
+lazyInitChart('chart-scatter',function(){
+  const chart=echarts.init(document.getElementById('chart-scatter'));
+  const rawData=[
+    ['数据录入员',88,5,800],['速记员',85,6,50],['银行柜员',78,8,120],
+    ['收银员',75,4.5,500],['客服代表',72,6,300],['会计',68,10,600],
+    ['翻译',62,12,80],['法律助理',55,15,100],['基础文案',52,8,200],
+    ['初级程序员',45,18,400],['数据分析师',35,25,150],['医生',25,30,400],
+    ['教师',20,12,1800],['心理咨询师',15,20,50],['创意总监',10,40,30]
+  ];
+  const option={
+    tooltip:{
+      backgroundColor:'rgba(255,255,255,.95)',borderColor:'#e5e7eb',
+      textStyle:{color:'#1a1a2e',fontFamily:'Microsoft YaHei,PingFang SC,sans-serif'},
+      formatter:function(p){
+        const d=p.data;
+        return`<div style="font-weight:700;font-size:14px;margin-bottom:4px">${d.name}</div>
+               <div>自动化风险：<b>${d.value[0]}%</b></div>
+               <div>平均年薪：<b>${d.value[1]}万</b></div>
+               <div>从业人数：<b>${d.value[2]}万</b></div>`;
+      }
+    },
+    grid:{left:'12%',right:'10%',top:'8%',bottom:'12%'},
+    xAxis:{
+      name:'自动化风险 (%)',nameLocation:'middle',nameGap:35,
+      nameTextStyle:{fontFamily:'Microsoft YaHei,PingFang SC,sans-serif',fontSize:13,color:'#555'},
+      splitLine:{lineStyle:{color:'#f0f0f0'}},
+      axisLabel:{fontFamily:'Microsoft YaHei,PingFang SC,sans-serif',formatter:'{value}%'}
+    },
+    yAxis:{
+      name:'平均年薪（万元）',nameLocation:'middle',nameGap:50,
+      nameTextStyle:{fontFamily:'Microsoft YaHei,PingFang SC,sans-serif',fontSize:13,color:'#555'},
+      splitLine:{lineStyle:{color:'#f0f0f0'}},
+      axisLabel:{fontFamily:'Microsoft YaHei,PingFang SC,sans-serif',formatter:'{value}万'}
+    },
+    series:[{
+      type:'effectScatter',
+      data:rawData.map(d=>({value:[d[1],d[2],d[3]],name:d[0]})),
+      symbolSize:function(val){return Math.sqrt(val[2])*2.5+10},
+      rippleEffect:{brushType:'stroke',scale:3,period:4},
+      itemStyle:{
+        color:function(p){
+          const risk=p.value[0];
+          if(risk>=70)return new echarts.graphic.LinearGradient(0,0,0,1,[{offset:0,color:'#E85D4A'},{offset:1,color:'#FF8A80'}]);
+          if(risk>=50)return new echarts.graphic.LinearGradient(0,0,0,1,[{offset:0,color:'#F59E0B'},{offset:1,color:'#FFD54F'}]);
+          if(risk>=30)return new echarts.graphic.LinearGradient(0,0,0,1,[{offset:0,color:'#3B82F6'},{offset:1,color:'#90CAF9'}]);
+          return new echarts.graphic.LinearGradient(0,0,0,1,[{offset:0,color:'#14B8A6'},{offset:1,color:'#80CBC4'}]);
+        },
+        shadowBlur:10,shadowColor:'rgba(0,0,0,.1)'
+      },
+      label:{
+        show:true,formatter:function(p){return p.data.name},
+        fontFamily:'Microsoft YaHei,PingFang SC,sans-serif',fontSize:11,position:'top',color:'#555'
+      },
+      animationDuration:2000
+    }]
+  };
+  chart.setOption(option);
+  window.addEventListener('resize',()=>chart.resize());
+  return chart;
+});
+
+// ========== CHART 6: SANKEY ==========
+lazyInitChart('chart-sankey',function(){
+  const chart=echarts.init(document.getElementById('chart-sankey'));
+  const option={
+    tooltip:{
+      trigger:'item',triggerOn:'mousemove',
+      backgroundColor:'rgba(255,255,255,.95)',borderColor:'#e5e7eb',
+      textStyle:{color:'#1a1a2e',fontFamily:'Microsoft YaHei,PingFang SC,sans-serif'}
+    },
+    series:[{
+      type:'sankey',
+      layout:'none',
+      emphasis:{focus:'adjacency'},
+      nodeAlign:'left',
+      top:'5%',bottom:'5%',left:'5%',right:'5%',
+      nodeWidth:20,nodeGap:16,
+      lineStyle:{color:'gradient',opacity:.3,curveness:.5},
+      label:{fontFamily:'Microsoft YaHei,PingFang SC,sans-serif',fontSize:12,color:'#1a1a2e'},
+      itemStyle:{borderWidth:0},
+      data:[
+        {name:'数据录入',itemStyle:{color:'#E85D4A'}},
+        {name:'基础财务',itemStyle:{color:'#F59E0B'}},
+        {name:'客服',itemStyle:{color:'#8B5CF6'}},
+        {name:'翻译',itemStyle:{color:'#3B82F6'}},
+        {name:'流水线工人',itemStyle:{color:'#6366F1'}},
+        {name:'AI训练师',itemStyle:{color:'#14B8A6'}},
+        {name:'数据标注',itemStyle:{color:'#06B6D4'}},
+        {name:'提示工程师',itemStyle:{color:'#10B981'}},
+        {name:'转岗培训',itemStyle:{color:'#F97316'}},
+        {name:'失业',itemStyle:{color:'#9CA3AF'}}
+      ],
+      links:[
+        {source:'数据录入',target:'AI训练师',value:240},
+        {source:'数据录入',target:'数据标注',value:200},
+        {source:'数据录入',target:'失业',value:160},
+        {source:'基础财务',target:'数据标注',value:180},
+        {source:'基础财务',target:'提示工程师',value:120},
+        {source:'基础财务',target:'转岗培训',value:100},
+        {source:'客服',target:'AI训练师',value:150},
+        {source:'客服',target:'提示工程师',value:100},
+        {source:'客服',target:'转岗培训',value:80},
+        {source:'客服',target:'失业',value:70},
+        {source:'翻译',target:'提示工程师',value:30},
+        {source:'翻译',target:'AI训练师',value:25},
+        {source:'翻译',target:'转岗培训',value:15},
+        {source:'翻译',target:'失业',value:10},
+        {source:'流水线工人',target:'数据标注',value:200},
+        {source:'流水线工人',target:'转岗培训',value:180},
+        {source:'流水线工人',target:'失业',value:120}
+      ],
+      animationDuration:1500,animationEasing:'cubicOut'
+    }]
+  };
+  chart.setOption(option);
+  window.addEventListener('resize',()=>chart.resize());
+  return chart;
+});
+
+// ========== CHART 7: DUAL AXIS LINE ==========
+lazyInitChart('chart-line',function(){
+  const chart=echarts.init(document.getElementById('chart-line'));
+  const years=['2019','2020','2021','2022','2023','2024','2025(预)','2026(预)','2027(预)','2028(预)','2029(预)','2030(预)'];
+  const demand=[60,90,130,180,280,400,480,560,640,720,800,900];
+  const supply=[20,30,45,65,95,130,170,210,260,310,360,420];
+  const gap=demand.map((d,i)=>d-supply[i]);
+  const option={
+    tooltip:{
+      trigger:'axis',
+      backgroundColor:'rgba(255,255,255,.95)',borderColor:'#e5e7eb',
+      textStyle:{color:'#1a1a2e',fontFamily:'Microsoft YaHei,PingFang SC,sans-serif'},
+      formatter:function(params){
+        let s=`<div style="font-weight:700;margin-bottom:6px">${params[0].axisValue}年</div>`;
+        params.forEach(p=>{
+          s+=`<div style="display:flex;align-items:center;gap:6px;margin:3px 0">
+            <span style="width:8px;height:8px;border-radius:50%;background:${p.color}"></span>
+            ${p.seriesName}：<b>${p.value}万</b></div>`;
+        });
+        return s;
+      }
+    },
+    legend:{
+      data:['人才需求','人才供给','缺口'],
+      bottom:10,textStyle:{fontFamily:'Microsoft YaHei,PingFang SC,sans-serif',fontSize:12}
+    },
+    grid:{left:'10%',right:'10%',top:'10%',bottom:'15%'},
+    xAxis:{
+      type:'category',data:years,
+      axisLabel:{fontFamily:'Microsoft YaHei,PingFang SC,sans-serif',rotate:30},
+      axisLine:{lineStyle:{color:'#e5e7eb'}}
+    },
+    yAxis:{
+      type:'value',name:'万人',
+      nameTextStyle:{fontFamily:'Microsoft YaHei,PingFang SC,sans-serif',fontSize:12},
+      splitLine:{lineStyle:{color:'#f0f0f0'}},
+      axisLabel:{fontFamily:'Microsoft YaHei,PingFang SC,sans-serif'}
+    },
+    series:[
+      {
+        name:'人才需求',type:'line',data:demand,smooth:true,
+        lineStyle:{width:3,color:'#E85D4A'},
+        itemStyle:{color:'#E85D4A'},
+        areaStyle:{color:new echarts.graphic.LinearGradient(0,0,0,1,[{offset:0,color:'rgba(232,93,74,.25)'},{offset:1,color:'rgba(232,93,74,.02)'}])},
+        animationDuration:2000
+      },
+      {
+        name:'人才供给',type:'line',data:supply,smooth:true,
+        lineStyle:{width:3,color:'#3B82F6'},
+        itemStyle:{color:'#3B82F6'},
+        areaStyle:{color:new echarts.graphic.LinearGradient(0,0,0,1,[{offset:0,color:'rgba(59,130,246,.25)'},{offset:1,color:'rgba(59,130,246,.02)'}])},
+        animationDuration:2000,animationDelay:300
+      },
+      {
+        name:'缺口',type:'bar',data:gap,barWidth:12,
+        itemStyle:{
+          borderRadius:[4,4,0,0],
+          color:new echarts.graphic.LinearGradient(0,0,0,1,[{offset:0,color:'rgba(245,158,11,.8)'},{offset:1,color:'rgba(245,158,11,.2)'}])
+        },
+        animationDuration:1500,animationDelay:600
+      }
+    ]
+  };
+  chart.setOption(option);
+  window.addEventListener('resize',()=>chart.resize());
+  return chart;
+});
+
+// ========== CHART 8: GAUGE (Multi-dimension readiness) ==========
+lazyInitChart('chart-gauge',function(){
+  const chart=echarts.init(document.getElementById('chart-gauge'));
+  const option={
+    tooltip:{trigger:'axis',axisPointer:{type:'shadow'},
+      backgroundColor:'rgba(255,255,255,.95)',borderColor:'#e5e7eb',
+      textStyle:{color:'#1a1a2e',fontFamily:'Microsoft YaHei,PingFang SC,sans-serif'},
+      formatter:function(p){
+        let s='<div style="font-weight:700;margin-bottom:4px">AI时代就绪度评估</div>';
+        p.forEach(d=>{
+          s+=`<div style="display:flex;align-items:center;gap:6px;margin:3px 0">
+            <span style="display:inline-block;width:10px;height:10px;border-radius:50%;background:${d.color}"></span>
+            ${d.name}：<b>${d.value}分</b>/100
+          </div>`;
+        });
+        return s;
+      }
+    },
+    grid:{left:'22%',right:'12%',top:'8%',bottom:'8%'},
+    xAxis:{type:'value',max:100,splitLine:{lineStyle:{color:'#f0f0f0'}},
+      axisLabel:{formatter:'{value}',fontFamily:'Microsoft YaHei,PingFang SC,sans-serif',fontSize:11}},
+    yAxis:{type:'category',
+      data:['教育体系','职业培训','企业转型','政策支持','数字素养','综合得分'],
+      axisLabel:{fontFamily:'Microsoft YaHei,PingFang SC,sans-serif',fontSize:12,fontWeight:function(v){return v==='综合得分'?'bold':'normal'}},
+      axisLine:{show:false},axisTick:{show:false}},
+    series:[{
+      type:'bar',
+      data:[
+        {value:35,itemStyle:{color:new echarts.graphic.LinearGradient(0,0,1,0,[{offset:0,color:'#8B5CF6'},{offset:1,color:'#A78BFA'}])}},
+        {value:31,itemStyle:{color:new echarts.graphic.LinearGradient(0,0,1,0,[{offset:0,color:'#E85D4A'},{offset:1,color:'#F87171'}])}},
+        {value:42,itemStyle:{color:new echarts.graphic.LinearGradient(0,0,1,0,[{offset:0,color:'#F59E0B'},{offset:1,color:'#FBBF24'}])}},
+        {value:53,itemStyle:{color:new echarts.graphic.LinearGradient(0,0,1,0,[{offset:0,color:'#3B82F6'},{offset:1,color:'#60A5FA'}])}},
+        {value:62,itemStyle:{color:new echarts.graphic.LinearGradient(0,0,1,0,[{offset:0,color:'#14B8A6'},{offset:1,color:'#5EEAD4'}])}},
+        {value:47,itemStyle:{color:new echarts.graphic.LinearGradient(0,0,1,0,[{offset:0,color:'#1a1a2e'},{offset:1,color:'#4a4a6e'}])}}
+      ],
+      barWidth:22,
+      label:{show:true,position:'right',formatter:'{c}分',
+        fontFamily:'Microsoft YaHei,PingFang SC,sans-serif',fontSize:13,fontWeight:'bold',color:'#1a1a2e'},
+      itemStyle:{borderRadius:[0,6,6,0]},
+      animationDuration:1500,animationEasing:'cubicOut',
+      markLine:{silent:true,symbol:'none',
+        lineStyle:{color:'#E85D4A',type:'dashed',width:1.5},
+        data:[{xAxis:47,label:{formatter:'综合 47分',position:'end',fontSize:11,color:'#E85D4A',fontFamily:'Microsoft YaHei,PingFang SC,sans-serif'}}]
+      }
+    }]
+  };
+  chart.setOption(option);
+  window.addEventListener('resize',()=>chart.resize());
+  return chart;
+});
+
+// ========== CHART 9: PIE/DONUT ==========
+lazyInitChart('chart-pie',function(){
+  const chart=echarts.init(document.getElementById('chart-pie'));
+  const option={
+    tooltip:{
+      backgroundColor:'rgba(255,255,255,.95)',borderColor:'#e5e7eb',
+      textStyle:{color:'#1a1a2e',fontFamily:'Microsoft YaHei,PingFang SC,sans-serif'},
+      formatter:function(p){
+        return`<div style="font-weight:700">${p.name}</div>
+               <div>占比：<b>${p.percent}%</b></div>
+               <div>约 <b>${p.data.workers}</b> 万从业者</div>`;
+      }
+    },
+    legend:{
+      orient:'vertical',right:'2%',top:'middle',
+      textStyle:{fontFamily:'Microsoft YaHei,PingFang SC,sans-serif',fontSize:11,width:120},
+      itemGap:14,itemWidth:14,itemHeight:14,
+      formatter:function(name){
+        // truncate long names
+        return name.length > 10 ? name.substring(0,10)+'...' : name;
+      }
+    },
+    series:[{
+      type:'pie',radius:['35%','62%'],center:['38%','50%'],
+      avoidLabelOverlap:true,
+      itemStyle:{borderRadius:6,borderColor:'#fff',borderWidth:3},
+      label:{show:false},
+      emphasis:{
+        label:{show:true,fontSize:14,fontWeight:'bold',fontFamily:'Microsoft YaHei,PingFang SC,sans-serif'},
+        itemStyle:{shadowBlur:20,shadowColor:'rgba(0,0,0,.15)'}
+      },
+      labelLine:{show:false},
+      data:[
+        {value:28,name:'高风险（>60%）',workers:'21000',itemStyle:{color:'#E85D4A'}},
+        {value:25,name:'中高风险（40-60%）',workers:'18750',itemStyle:{color:'#F59E0B'}},
+        {value:29,name:'中低风险（20-40%）',workers:'21750',itemStyle:{color:'#3B82F6'}},
+        {value:18,name:'低风险（<20%）',workers:'13500',itemStyle:{color:'#14B8A6'}}
+      ],
+      animationType:'scale',animationDuration:1500,animationEasing:'elasticOut'
+    }]
+  };
+  chart.setOption(option);
+  window.addEventListener('resize',()=>chart.resize());
+  return chart;
+});
+
+// ========== CLOSING ANIMATION ==========
+gsap.fromTo('#closing h2',{y:50,opacity:0},{scrollTrigger:{trigger:'#closing',start:'top 70%',immediateRender:false},
+  y:0,opacity:1,duration:1,ease:'power2.out'});
+gsap.fromTo('#closing p',{y:30,opacity:0},{scrollTrigger:{trigger:'#closing',start:'top 60%',immediateRender:false},
+  y:0,opacity:1,duration:.8,delay:.3,ease:'power2.out'});
+gsap.fromTo('#closing .final-line',{y:30,opacity:0},{scrollTrigger:{trigger:'#closing',start:'top 50%',immediateRender:false},
+  y:0,opacity:1,duration:.8,delay:.6,ease:'power2.out'});
+</script>
+</body>
+</html>
